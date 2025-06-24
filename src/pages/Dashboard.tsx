@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -72,6 +71,30 @@ const Dashboard = () => {
     { label: 'Fat', value: dailySummary.fats, max: 80, color: 'bg-purple-500' },
   ];
 
+  // Enhanced container variants for staggered animations
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut"
+      }
+    }
+  };
+
   return (
     <>
       <AnimatePresence>
@@ -81,223 +104,313 @@ const Dashboard = () => {
       </AnimatePresence>
 
       <motion.div
-        className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 p-4"
+        className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 p-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: showAnimation ? 0 : 1 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.8 }}
+        variants={containerVariants}
       >
-        <div className="max-w-6xl mx-auto">
-          {/* Header */}
+        <motion.div 
+          className="max-w-6xl mx-auto"
+          variants={containerVariants}
+          initial="hidden"
+          animate={showAnimation ? "hidden" : "visible"}
+        >
+          {/* Enhanced Header */}
           <motion.div
             className="flex justify-between items-center mb-8"
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            variants={itemVariants}
           >
-            <div>
-              <h1 className="text-4xl font-bold text-gray-800 mb-2">NutriBox Dashboard</h1>
-              <p className="text-gray-600">Smart Food Analysis System</p>
-            </div>
-            <div className="flex gap-2">
-              <Button 
-                onClick={() => setIsChatbotOpen(true)}
-                className="bg-purple-600 hover:bg-purple-700"
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.2 }}
+            >
+              <h1 className="text-5xl font-bold bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                NutriBox Dashboard
+              </h1>
+              <p className="text-gray-600 text-lg">Smart Food Analysis System</p>
+            </motion.div>
+            <div className="flex gap-3">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <MessageSquare className="w-4 h-4 mr-2" />
-                AI Assistant
-              </Button>
-              <Link to="/settings">
-                <Button variant="outline">
-                  <Settings className="w-4 h-4 mr-2" />
-                  Settings
+                <Button 
+                  onClick={() => setIsChatbotOpen(true)}
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg"
+                >
+                  <MessageSquare className="w-4 h-4 mr-2" />
+                  AI Assistant
                 </Button>
+              </motion.div>
+              <Link to="/settings">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button variant="outline" className="shadow-sm hover:shadow-md transition-shadow">
+                    <Settings className="w-4 h-4 mr-2" />
+                    Settings
+                  </Button>
+                </motion.div>
               </Link>
             </div>
           </motion.div>
 
-          {/* Daily Summary Card */}
+          {/* Enhanced Daily Summary Card */}
           <motion.div
             className="mb-8"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
+            variants={itemVariants}
           >
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Apple className="w-5 h-5 text-green-600" />
-                  Daily Summary
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                  <div className="text-center p-3 bg-orange-50 rounded-lg">
-                    <div className="text-2xl font-bold text-orange-600">
-                      <AnimatedCounter value={dailySummary.calories} duration={2} />
-                    </div>
-                    <div className="text-sm text-gray-600">Calories</div>
-                  </div>
-                  <div className="text-center p-3 bg-blue-50 rounded-lg">
-                    <div className="text-2xl font-bold text-blue-600">
-                      <AnimatedCounter value={dailySummary.protein} duration={2} suffix="g" decimals={1} />
-                    </div>
-                    <div className="text-sm text-gray-600">Protein</div>
-                  </div>
-                  <div className="text-center p-3 bg-green-50 rounded-lg">
-                    <div className="text-2xl font-bold text-green-600">
-                      <AnimatedCounter value={dailySummary.carbs} duration={2} suffix="g" />
-                    </div>
-                    <div className="text-sm text-gray-600">Carbs</div>
-                  </div>
-                  <div className="text-center p-3 bg-purple-50 rounded-lg">
-                    <div className="text-2xl font-bold text-purple-600">
-                      <AnimatedCounter value={dailySummary.fats} duration={2} suffix="g" />
-                    </div>
-                    <div className="text-sm text-gray-600">Fats</div>
-                  </div>
-                </div>
-                
-                <div className="mt-4">
-                  <h4 className="text-sm font-medium text-gray-700 mb-3">Today's Nutrient Breakdown</h4>
-                  <MiniBarChart data={chartData} />
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
+            <motion.div
+              whileHover={{ y: -2, boxShadow: "0 10px 25px rgba(0,0,0,0.1)" }}
+              transition={{ duration: 0.3 }}
+            >
+              <Card className="overflow-hidden bg-gradient-to-br from-white to-gray-50 border-0 shadow-lg">
+                <CardHeader className="bg-gradient-to-r from-green-500 to-blue-500 text-white">
+                  <CardTitle className="flex items-center gap-2 text-xl">
+                    <motion.div
+                      animate={{ rotate: [0, 360] }}
+                      transition={{ duration: 2, ease: "easeInOut" }}
+                    >
+                      <Apple className="w-6 h-6" />
+                    </motion.div>
+                    Daily Summary
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <motion.div 
+                    className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6"
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="visible"
+                  >
+                    {[
+                      { value: dailySummary.calories, label: 'Calories', color: 'from-orange-400 to-orange-600', icon: '🔥' },
+                      { value: dailySummary.protein, label: 'Protein', color: 'from-blue-400 to-blue-600', icon: '💪', suffix: 'g', decimals: 1 },
+                      { value: dailySummary.carbs, label: 'Carbs', color: 'from-green-400 to-green-600', icon: '🌾', suffix: 'g' },
+                      { value: dailySummary.fats, label: 'Fats', color: 'from-purple-400 to-purple-600', icon: '🥑', suffix: 'g' }
+                    ].map((item, index) => (
+                      <motion.div
+                        key={item.label}
+                        className={`text-center p-4 bg-gradient-to-br ${item.color} rounded-xl text-white shadow-lg`}
+                        variants={itemVariants}
+                        whileHover={{ 
+                          scale: 1.05,
+                          rotateY: 5,
+                          boxShadow: "0 8px 25px rgba(0,0,0,0.2)"
+                        }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <div className="text-2xl mb-2">{item.icon}</div>
+                        <div className="text-3xl font-bold mb-1">
+                          <AnimatedCounter 
+                            value={item.value} 
+                            duration={2} 
+                            suffix={item.suffix || ''} 
+                            decimals={item.decimals || 0} 
+                          />
+                        </div>
+                        <div className="text-sm opacity-90">{item.label}</div>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                  
+                  <motion.div 
+                    className="mt-6"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1 }}
+                  >
+                    <h4 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                      📊 Today's Nutrient Breakdown
+                    </h4>
+                    <MiniBarChart data={chartData} />
+                  </motion.div>
+                </CardContent>
+              </Card>
+            </motion.div>
 
-          {/* Current Food Analysis and Environment */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            {/* Main Food Card */}
+          {/* Enhanced Current Food Analysis and Environment */}
+          <motion.div 
+            className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {/* Enhanced Main Food Card */}
             <motion.div
               className="lg:col-span-2"
-              initial={{ x: -20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
+              variants={itemVariants}
             >
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Apple className="w-5 h-5" />
-                    Current Food Analysis
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <h3 className="text-2xl font-semibold">{currentFood.name}</h3>
-                      <p className="text-gray-600">{currentFood.weight}g</p>
-                    </div>
-                    <Badge className={`${getFreshnessColor(currentFood.freshness)} text-white`}>
-                      {currentFood.freshness} ({currentFood.freshnessScore}%)
-                    </Badge>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    <div className="text-center p-3 bg-orange-50 rounded-lg">
-                      <div className="text-2xl font-bold text-orange-600">{currentFood.nutrition.calories}</div>
-                      <div className="text-sm text-gray-600">Calories</div>
-                    </div>
-                    <div className="text-center p-3 bg-blue-50 rounded-lg">
-                      <div className="text-2xl font-bold text-blue-600">{currentFood.nutrition.protein}g</div>
-                      <div className="text-sm text-gray-600">Protein</div>
-                    </div>
-                    <div className="text-center p-3 bg-green-50 rounded-lg">
-                      <div className="text-2xl font-bold text-green-600">{currentFood.nutrition.carbs}g</div>
-                      <div className="text-sm text-gray-600">Carbs</div>
-                    </div>
-                    <div className="text-center p-3 bg-purple-50 rounded-lg">
-                      <div className="text-2xl font-bold text-purple-600">{currentFood.nutrition.fats}g</div>
-                      <div className="text-sm text-gray-600">Fats</div>
-                    </div>
-                    <div className="text-center p-3 bg-yellow-50 rounded-lg">
-                      <div className="text-2xl font-bold text-yellow-600">{currentFood.nutrition.fiber}g</div>
-                      <div className="text-sm text-gray-600">Fiber</div>
-                    </div>
-                    <div className="text-center p-3 bg-red-50 rounded-lg">
-                      <div className="text-2xl font-bold text-red-600">{currentFood.nutrition.sugar}g</div>
-                      <div className="text-sm text-gray-600">Sugar</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <motion.div
+                whileHover={{ y: -3, boxShadow: "0 12px 30px rgba(0,0,0,0.12)" }}
+                transition={{ duration: 0.3 }}
+              >
+                <Card className="overflow-hidden bg-gradient-to-br from-white to-gray-50 border-0 shadow-lg">
+                  <CardHeader className="bg-gradient-to-r from-green-400 to-blue-400 text-white">
+                    <CardTitle className="flex items-center gap-2 text-xl">
+                      <Apple className="w-6 h-6" />
+                      Current Food Analysis
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-6">
+                    <motion.div 
+                      className="flex items-center justify-between mb-6"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.3 }}
+                    >
+                      <div>
+                        <h3 className="text-3xl font-bold text-gray-800">{currentFood.name}</h3>
+                        <p className="text-gray-600 text-lg">{currentFood.weight}g</p>
+                      </div>
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: 0.5, type: "spring" }}
+                      >
+                        <Badge className={`${getFreshnessColor(currentFood.freshness)} text-white text-sm px-3 py-1`}>
+                          {currentFood.freshness} ({currentFood.freshnessScore}%)
+                        </Badge>
+                      </motion.div>
+                    </motion.div>
+                    
+                    <motion.div 
+                      className="grid grid-cols-2 md:grid-cols-3 gap-4"
+                      variants={containerVariants}
+                      initial="hidden"
+                      animate="visible"
+                    >
+                      <div className="text-center p-3 bg-orange-50 rounded-lg">
+                        <div className="text-2xl font-bold text-orange-600">{currentFood.nutrition.calories}</div>
+                        <div className="text-sm text-gray-600">Calories</div>
+                      </div>
+                      <div className="text-center p-3 bg-blue-50 rounded-lg">
+                        <div className="text-2xl font-bold text-blue-600">{currentFood.nutrition.protein}g</div>
+                        <div className="text-sm text-gray-600">Protein</div>
+                      </div>
+                      <div className="text-center p-3 bg-green-50 rounded-lg">
+                        <div className="text-2xl font-bold text-green-600">{currentFood.nutrition.carbs}g</div>
+                        <div className="text-sm text-gray-600">Carbs</div>
+                      </div>
+                      <div className="text-center p-3 bg-purple-50 rounded-lg">
+                        <div className="text-2xl font-bold text-purple-600">{currentFood.nutrition.fats}g</div>
+                        <div className="text-sm text-gray-600">Fats</div>
+                      </div>
+                      <div className="text-center p-3 bg-yellow-50 rounded-lg">
+                        <div className="text-2xl font-bold text-yellow-600">{currentFood.nutrition.fiber}g</div>
+                        <div className="text-sm text-gray-600">Fiber</div>
+                      </div>
+                      <div className="text-center p-3 bg-red-50 rounded-lg">
+                        <div className="text-2xl font-bold text-red-600">{currentFood.nutrition.sugar}g</div>
+                        <div className="text-sm text-gray-600">Sugar</div>
+                      </div>
+                    </motion.div>
+                  </CardContent>
+                </Card>
+              </motion.div>
             </motion.div>
 
-            {/* Environment Card */}
-            <motion.div
-              initial={{ x: 20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-            >
-              <Card className="mb-6">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Thermometer className="w-5 h-5" />
-                    Environment
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Thermometer className="w-4 h-4 text-red-500" />
-                        <span>Temperature</span>
+            {/* Enhanced Environment and Tip Cards */}
+            <motion.div variants={itemVariants}>
+              <motion.div
+                whileHover={{ y: -2, boxShadow: "0 8px 20px rgba(0,0,0,0.1)" }}
+                className="mb-6"
+              >
+                <Card className="bg-gradient-to-br from-white to-blue-50 border-0 shadow-lg">
+                  <CardHeader className="bg-gradient-to-r from-blue-400 to-purple-400 text-white">
+                    <CardTitle className="flex items-center gap-2">
+                      <Thermometer className="w-5 h-5" />
+                      Environment
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-4">
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Thermometer className="w-4 h-4 text-red-500" />
+                          <span>Temperature</span>
+                        </div>
+                        <span className="font-semibold">{currentFood.environment.temperature}°C</span>
                       </div>
-                      <span className="font-semibold">{currentFood.environment.temperature}°C</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Droplets className="w-4 h-4 text-blue-500" />
-                        <span>Humidity</span>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Droplets className="w-4 h-4 text-blue-500" />
+                          <span>Humidity</span>
+                        </div>
+                        <span className="font-semibold">{currentFood.environment.humidity}%</span>
                       </div>
-                      <span className="font-semibold">{currentFood.environment.humidity}%</span>
+                      <div className="text-sm text-gray-500 mt-4">
+                        Last updated: {new Date(currentFood.timestamp).toLocaleString()}
+                      </div>
                     </div>
-                    <div className="text-sm text-gray-500 mt-4">
-                      Last updated: {new Date(currentFood.timestamp).toLocaleString()}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </motion.div>
 
-              {/* Tip of the Day Card */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Lightbulb className="w-5 h-5 text-yellow-500" />
-                    Tip of the Day
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-gray-700 leading-relaxed">
-                    {dailyTip || "Loading your daily health tip..."}
-                  </p>
-                </CardContent>
-              </Card>
+              {/* Enhanced Tip of the Day Card */}
+              <motion.div
+                whileHover={{ y: -2, boxShadow: "0 8px 20px rgba(0,0,0,0.1)" }}
+              >
+                <Card className="bg-gradient-to-br from-white to-yellow-50 border-0 shadow-lg">
+                  <CardHeader className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white">
+                    <CardTitle className="flex items-center gap-2">
+                      <motion.div
+                        animate={{ rotate: [0, 10, -10, 0] }}
+                        transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                      >
+                        <Lightbulb className="w-5 h-5" />
+                      </motion.div>
+                      Tip of the Day
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-4">
+                    <motion.p 
+                      className="text-sm text-gray-700 leading-relaxed"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.5 }}
+                    >
+                      {dailyTip || "Loading your daily health tip..."}
+                    </motion.p>
+                  </CardContent>
+                </Card>
+              </motion.div>
             </motion.div>
-          </div>
+          </motion.div>
 
-          {/* Quick Actions */}
+          {/* Enhanced Quick Actions */}
           <motion.div
             className="flex gap-4 justify-center"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
+            variants={itemVariants}
           >
             <Link to="/history">
-              <Button size="lg" variant="outline" className="min-w-32">
-                <History className="w-4 h-4 mr-2" />
-                View History
-              </Button>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button size="lg" variant="outline" className="min-w-40 shadow-lg hover:shadow-xl transition-all">
+                  <History className="w-5 h-5 mr-2" />
+                  View History
+                </Button>
+              </motion.div>
             </Link>
-            <Button 
-              size="lg" 
-              onClick={() => setIsChatbotOpen(true)}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 min-w-32"
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              <MessageSquare className="w-4 h-4 mr-2" />
-              Ask AI
-            </Button>
+              <Button 
+                size="lg" 
+                onClick={() => setIsChatbotOpen(true)}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 min-w-40 shadow-lg hover:shadow-xl transition-all"
+              >
+                <MessageSquare className="w-5 h-5 mr-2" />
+                Ask AI
+              </Button>
+            </motion.div>
           </motion.div>
-        </div>
+        </motion.div>
 
         {/* Floating Chat Widget */}
         <FloatingChatWidget />
