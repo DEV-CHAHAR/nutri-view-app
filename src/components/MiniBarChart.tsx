@@ -13,65 +13,46 @@ interface MiniBarChartProps {
 
 const MiniBarChart: React.FC<MiniBarChartProps> = ({ data }) => {
   return (
-    <div className="flex items-end justify-between gap-3 h-20 p-2">
+    <div className="space-y-3">
       {data.map((item, index) => (
-        <motion.div 
-          key={item.label} 
-          className="flex flex-col items-center flex-1 group cursor-pointer"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: index * 0.1 }}
-          whileHover={{ scale: 1.05 }}
+        <motion.div
+          key={item.label}
+          className="flex items-center gap-3"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: index * 0.1 }}
         >
-          <div className="relative w-full bg-gray-200 rounded-lg overflow-hidden shadow-sm">
-            <motion.div
-              className={`${item.color} rounded-lg relative overflow-hidden`}
-              initial={{ height: 0 }}
-              animate={{ height: `${(item.value / item.max) * 64}px` }}
-              transition={{ 
-                duration: 1.8, 
-                delay: index * 0.3, 
-                ease: "easeOut",
-                type: "spring",
-                stiffness: 80
-              }}
-              whileHover={{ 
-                boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-                brightness: 1.1
-              }}
-            >
-              {/* Shimmer effect */}
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30"
-                initial={{ x: "-100%" }}
-                animate={{ x: "100%" }}
-                transition={{ 
-                  duration: 2, 
-                  delay: index * 0.3 + 1,
-                  ease: "easeInOut"
-                }}
-              />
-              
-              {/* Tooltip on hover */}
-              <motion.div
-                className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none z-10"
-                initial={{ opacity: 0, y: 5 }}
-                whileHover={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                {item.value}{item.label === 'Cal' ? '' : 'g'}
-              </motion.div>
-            </motion.div>
-          </div>
-          
-          <motion.span 
-            className="text-xs text-gray-600 mt-2 font-medium"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: index * 0.1 + 0.5 }}
-          >
+          <div className="w-10 text-sm font-medium text-gray-600 dark:text-gray-400">
             {item.label}
-          </motion.span>
+          </div>
+          <div className="flex-1 relative">
+            <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden relative">
+              <motion.div
+                className={`h-full ${item.color} rounded-full relative overflow-hidden`}
+                initial={{ width: 0 }}
+                animate={{ width: `${(item.value / item.max) * 100}%` }}
+                transition={{ duration: 1.5, delay: index * 0.2, ease: [0.23, 1, 0.32, 1] }}
+                whileHover={{ 
+                  scale: 1.02,
+                  filter: "brightness(1.1)" // Fixed: use filter instead of direct brightness property
+                }}
+              >
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                  animate={{ x: [-100, 300] }}
+                  transition={{ 
+                    duration: 2, 
+                    repeat: Infinity, 
+                    repeatDelay: 3,
+                    ease: "easeInOut" 
+                  }}
+                />
+              </motion.div>
+            </div>
+          </div>
+          <div className="w-12 text-sm font-semibold text-gray-700 dark:text-gray-300 text-right">
+            {item.value}
+          </div>
         </motion.div>
       ))}
     </div>

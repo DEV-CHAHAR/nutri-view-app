@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,7 +7,7 @@ import { MessageSquare, History, Settings, Apple, Thermometer, Droplets, Lightbu
 import { Link } from 'react-router-dom';
 import ChatbotModal from '@/components/ChatbotModal';
 import LogoAnimation from '@/components/LogoAnimation';
-import FloatingChatWidget from '@/components/FloatingChatWidget';
+import FloatingAIAssistant from '@/components/FloatingAIAssistant';
 import AnimatedCounter from '@/components/AnimatedCounter';
 import MiniBarChart from '@/components/MiniBarChart';
 import { tipService } from '@/services/tipService';
@@ -72,7 +71,7 @@ const Dashboard = () => {
     { label: 'Fat', value: dailySummary.fats, max: 80, color: 'bg-purple-500' },
   ];
 
-  // Enhanced container variants for staggered animations
+  // Enhanced container variants for staggered animations - fixed ease types
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -91,7 +90,7 @@ const Dashboard = () => {
       opacity: 1,
       transition: {
         duration: 0.6,
-        ease: "easeOut"
+        ease: [0.23, 1, 0.32, 1] // Fixed: use cubic bezier array instead of string
       }
     }
   };
@@ -105,11 +104,10 @@ const Dashboard = () => {
       </AnimatePresence>
 
       <motion.div
-        className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 p-4"
+        className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4 transition-colors duration-300"
         initial={{ opacity: 0 }}
         animate={{ opacity: showAnimation ? 0 : 1 }}
         transition={{ duration: 0.8 }}
-        variants={containerVariants}
       >
         <motion.div 
           className="max-w-6xl mx-auto"
@@ -129,7 +127,7 @@ const Dashboard = () => {
               <h1 className="text-5xl font-bold bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
                 NutriBox Dashboard
               </h1>
-              <p className="text-gray-600 text-lg">Smart Food Analysis System</p>
+              <p className="text-gray-600 dark:text-gray-300 text-lg">Smart Food Analysis System</p>
             </motion.div>
             <div className="flex gap-3">
               <motion.div
@@ -147,7 +145,7 @@ const Dashboard = () => {
               <Link to="/settings">
                 <motion.div
                   whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileTrap={{ scale: 0.95 }}
                 >
                   <Button variant="outline" className="shadow-sm hover:shadow-md transition-shadow">
                     <Settings className="w-4 h-4 mr-2" />
@@ -167,7 +165,7 @@ const Dashboard = () => {
               whileHover={{ y: -2, boxShadow: "0 10px 25px rgba(0,0,0,0.1)" }}
               transition={{ duration: 0.3 }}
             >
-              <Card className="overflow-hidden bg-gradient-to-br from-white to-gray-50 border-0 shadow-lg">
+              <Card className="overflow-hidden bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-700 border-0 shadow-lg">
                 <CardHeader className="bg-gradient-to-r from-green-500 to-blue-500 text-white">
                   <CardTitle className="flex items-center gap-2 text-xl">
                     <motion.div
@@ -223,7 +221,7 @@ const Dashboard = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 1 }}
                   >
-                    <h4 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                    <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4 flex items-center gap-2">
                       📊 Today's Nutrient Breakdown
                     </h4>
                     <MiniBarChart data={chartData} />
@@ -249,7 +247,7 @@ const Dashboard = () => {
                 whileHover={{ y: -3, boxShadow: "0 12px 30px rgba(0,0,0,0.12)" }}
                 transition={{ duration: 0.3 }}
               >
-                <Card className="overflow-hidden bg-gradient-to-br from-white to-gray-50 border-0 shadow-lg">
+                <Card className="overflow-hidden bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-700 border-0 shadow-lg">
                   <CardHeader className="bg-gradient-to-r from-green-400 to-blue-400 text-white">
                     <CardTitle className="flex items-center gap-2 text-xl">
                       <Apple className="w-6 h-6" />
@@ -264,8 +262,8 @@ const Dashboard = () => {
                       transition={{ delay: 0.3 }}
                     >
                       <div>
-                        <h3 className="text-3xl font-bold text-gray-800">{currentFood.name}</h3>
-                        <p className="text-gray-600 text-lg">{currentFood.weight}g</p>
+                        <h3 className="text-3xl font-bold text-gray-800 dark:text-gray-200">{currentFood.name}</h3>
+                        <p className="text-gray-600 dark:text-gray-300 text-lg">{currentFood.weight}g</p>
                       </div>
                       <motion.div
                         initial={{ scale: 0 }}
@@ -284,29 +282,29 @@ const Dashboard = () => {
                       initial="hidden"
                       animate="visible"
                     >
-                      <div className="text-center p-3 bg-orange-50 rounded-lg">
-                        <div className="text-2xl font-bold text-orange-600">{currentFood.nutrition.calories}</div>
-                        <div className="text-sm text-gray-600">Calories</div>
+                      <div className="text-center p-3 bg-orange-50 dark:bg-orange-900 rounded-lg">
+                        <div className="text-2xl font-bold text-orange-600 dark:text-orange-300">{currentFood.nutrition.calories}</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">Calories</div>
                       </div>
-                      <div className="text-center p-3 bg-blue-50 rounded-lg">
-                        <div className="text-2xl font-bold text-blue-600">{currentFood.nutrition.protein}g</div>
-                        <div className="text-sm text-gray-600">Protein</div>
+                      <div className="text-center p-3 bg-blue-50 dark:bg-blue-900 rounded-lg">
+                        <div className="text-2xl font-bold text-blue-600 dark:text-blue-300">{currentFood.nutrition.protein}g</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">Protein</div>
                       </div>
-                      <div className="text-center p-3 bg-green-50 rounded-lg">
-                        <div className="text-2xl font-bold text-green-600">{currentFood.nutrition.carbs}g</div>
-                        <div className="text-sm text-gray-600">Carbs</div>
+                      <div className="text-center p-3 bg-green-50 dark:bg-green-900 rounded-lg">
+                        <div className="text-2xl font-bold text-green-600 dark:text-green-300">{currentFood.nutrition.carbs}g</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">Carbs</div>
                       </div>
-                      <div className="text-center p-3 bg-purple-50 rounded-lg">
-                        <div className="text-2xl font-bold text-purple-600">{currentFood.nutrition.fats}g</div>
-                        <div className="text-sm text-gray-600">Fats</div>
+                      <div className="text-center p-3 bg-purple-50 dark:bg-purple-900 rounded-lg">
+                        <div className="text-2xl font-bold text-purple-600 dark:text-purple-300">{currentFood.nutrition.fats}g</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">Fats</div>
                       </div>
-                      <div className="text-center p-3 bg-yellow-50 rounded-lg">
-                        <div className="text-2xl font-bold text-yellow-600">{currentFood.nutrition.fiber}g</div>
-                        <div className="text-sm text-gray-600">Fiber</div>
+                      <div className="text-center p-3 bg-yellow-50 dark:bg-yellow-900 rounded-lg">
+                        <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-300">{currentFood.nutrition.fiber}g</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">Fiber</div>
                       </div>
-                      <div className="text-center p-3 bg-red-50 rounded-lg">
-                        <div className="text-2xl font-bold text-red-600">{currentFood.nutrition.sugar}g</div>
-                        <div className="text-sm text-gray-600">Sugar</div>
+                      <div className="text-center p-3 bg-red-50 dark:bg-red-900 rounded-lg">
+                        <div className="text-2xl font-bold text-red-600 dark:text-red-300">{currentFood.nutrition.sugar}g</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">Sugar</div>
                       </div>
                     </motion.div>
                   </CardContent>
@@ -320,7 +318,7 @@ const Dashboard = () => {
                 whileHover={{ y: -2, boxShadow: "0 8px 20px rgba(0,0,0,0.1)" }}
                 className="mb-6"
               >
-                <Card className="bg-gradient-to-br from-white to-blue-50 border-0 shadow-lg">
+                <Card className="bg-gradient-to-br from-white to-blue-50 dark:from-gray-800 dark:to-gray-700 border-0 shadow-lg">
                   <CardHeader className="bg-gradient-to-r from-blue-400 to-purple-400 text-white">
                     <CardTitle className="flex items-center gap-2">
                       <Thermometer className="w-5 h-5" />
@@ -343,7 +341,7 @@ const Dashboard = () => {
                         </div>
                         <span className="font-semibold">{currentFood.environment.humidity}%</span>
                       </div>
-                      <div className="text-sm text-gray-500 mt-4">
+                      <div className="text-sm text-gray-500 dark:text-gray-400 mt-4">
                         Last updated: {new Date(currentFood.timestamp).toLocaleString()}
                       </div>
                     </div>
@@ -355,7 +353,7 @@ const Dashboard = () => {
               <motion.div
                 whileHover={{ y: -2, boxShadow: "0 8px 20px rgba(0,0,0,0.1)" }}
               >
-                <Card className="bg-gradient-to-br from-white to-yellow-50 border-0 shadow-lg">
+                <Card className="bg-gradient-to-br from-white to-yellow-50 dark:from-gray-800 dark:to-yellow-100 border-0 shadow-lg">
                   <CardHeader className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white">
                     <CardTitle className="flex items-center gap-2">
                       <motion.div
@@ -369,7 +367,7 @@ const Dashboard = () => {
                   </CardHeader>
                   <CardContent className="p-4">
                     <motion.p 
-                      className="text-sm text-gray-700 leading-relaxed"
+                      className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.5 }}
@@ -415,7 +413,7 @@ const Dashboard = () => {
         </motion.div>
 
         {/* Floating Chat Widget */}
-        <FloatingChatWidget />
+        <FloatingAIAssistant />
 
         {/* Chatbot Modal */}
         <ChatbotModal 
